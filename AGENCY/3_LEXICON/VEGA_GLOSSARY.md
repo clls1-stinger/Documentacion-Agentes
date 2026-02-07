@@ -21,6 +21,11 @@
 *   **Principle**: "Do not guess. Look."
 *   **Artifacts**: Screenshots, verbose logs, database queries, state dumps.
 
+### 🤝 The Human Handover (Intervention Protocol)
+*   **Definition**: The explicit request for human assistance when an agent encounters a limitation outside its capabilities.
+*   **Protocol**: STOP -> ASK -> WALKTHROUGH.
+*   **Requirement**: Must provide a simplified, step-by-step guide for the human to resolve the blocker.
+
 ## II. TEMPORAL CONCEPTS (CHRONOS)
 
 ### 📜 Arche (The Origin)
@@ -28,7 +33,7 @@
 *   **Includes**: Core protocols, initial requirements, and the "why" of the project's existence.
 
 ### 📍 Status Quo (The Present)
-*   **Definition**: The exact, verifiable state of the system at the current moment ().
+*   **Definition**: The exact, verifiable state of the system at the current moment (`t=now`).
 *   **Includes**: Active tasks, known bugs, current git branch, and running processes.
 
 ### 🚀 Telos (The Destination)
@@ -43,7 +48,7 @@
 
 ### 🧠 Meta-Cognition
 *   **Definition**: The act of documenting the *reasoning* behind a decision, not just the decision itself.
-*   **Artifact**: .
+*   **Artifact**: `DECISION_RECORD.md`.
 
 ## IV. DATA STRUCTURES
 
