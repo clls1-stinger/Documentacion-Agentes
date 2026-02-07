@@ -1,0 +1,53 @@
+{
+  "meta": {
+    "id": "qg0h2jVtSHq4qzo3KDpJW",
+    "name": "My workflow",
+    "exported_at": "2026-02-02T21:37:59.505002"
+  },
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "5cbfd769-1878-42ec-aaef-ab3415c2ac45",
+      "name": "When clicking \u2018Execute workflow\u2019"
+    },
+    {
+      "parameters": {
+        "operation": "chat",
+        "prompt": "hola",
+        "additionalOptions": {}
+      },
+      "type": "CUSTOM.geminiCLI",
+      "typeVersion": 1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "0f03db19-4935-4d2d-8911-1aa49f60b1ac",
+      "name": "Gemini CLI"
+    }
+  ],
+  "connections": {
+    "When clicking \u2018Execute workflow\u2019": {
+      "main": [
+        [
+          {
+            "node": "Gemini CLI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "staticData": null
+}

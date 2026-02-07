@@ -1,0 +1,852 @@
+{
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "28a174f4-db7a-4445-a7e9-9f1a5febba70",
+      "name": "When chat message received",
+      "type": "@n8n/n8n-nodes-langchain.manualChatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -240,
+        3560
+      ]
+    },
+    {
+      "parameters": {
+        "fileSelector": "/home/emky/n8n/history.json",
+        "options": {}
+      },
+      "id": "bdb72c02-81cf-4416-b41a-db87ac2367bd",
+      "name": "Read History",
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        120,
+        3520
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "\n// VEGA v24: Fixed Memory Logic with Binary Output\nconst items = $input.all();\nif (items.length === 0) return [{ json: { error: \"No input for memory\" } }];\n\nconst item = items[0].json;\n\n// 1. Update Technical History (Internal steps)\nconst history = Array.isArray(item.history) ? item.history : [];\nif (item.action_taken) {\n    history.push({\n      role: \"assistant\",\n      content: `Action: ${item.action_taken}\\nResult: ${item.tool_result || 'No Result'}`\n    });\n}\n\n// 2. Update Chat History (Interaction with user)\nlet chatHistory = Array.isArray(item.chat_history) ? item.chat_history : [];\nif (item.response && item.user_goal) {\n    chatHistory.push({\n      user: item.user_goal,\n      ai: item.response,\n      timestamp: new Date().toISOString()\n    });\n}\n\n// 3. Update Counter\nlet counter = typeof item.counter === 'number' ? item.counter : 0;\ncounter++;\n\n// 4. Prepare Binary Content (for history.json)\nconst content = JSON.stringify(chatHistory.slice(-20), null, 2);\n\nreturn [{\n  json: {\n    user_goal: item.user_goal || \"No Goal\",\n    history: history,\n    counter: counter,\n    chat_history: chatHistory,\n    response: item.response || null,\n    last_tool_data: item.tool_result_data || null\n  },\n  binary: {\n    data: {\n      data: Buffer.from(content).toString('base64'),\n      mimeType: 'application/json',\n      fileExtension: 'json',\n      fileName: 'history.json'\n    }\n  }\n}];\n"
+      },
+      "id": "85ffd819-6cab-42c4-b9a2-1b1d9db23277",
+      "name": "Update Memory",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1960,
+        3360
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "/home/emky/n8n/history.json",
+        "options": {}
+      },
+      "id": "b93ecb19-af22-439a-a22d-5c4523f32adf",
+      "name": "Save History to Disk",
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        2180,
+        3360
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "fileFolder",
+        "operation": "search",
+        "searchMethod": "query",
+        "queryString": "name contains '{{ $json.datos.query }}' and trashed = false",
+        "returnAll": false,
+        "limit": 10,
+        "options": {}
+      },
+      "id": "4b6a6116-6571-4c34-84fc-b6922e0e6a0d",
+      "name": "Drive Search",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        2700,
+        3500
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "2rl8vh5wM9ZsAbep",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "file",
+        "operation": "download",
+        "fileId": "={{ $json.datos.fileId }}"
+      },
+      "id": "3814f059-fee6-40e7-86b5-8a7a4dbdc455",
+      "name": "Drive Download",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        2720,
+        3700
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "2rl8vh5wM9ZsAbep",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fileName": "={{ '/home/emky/n8n/descargas/' + ($json.datos.filename || 'downloaded_file') }}",
+        "options": {}
+      },
+      "id": "8a764146-6b47-4920-ba93-860b958182ab",
+      "name": "Save to Disk",
+      "type": "n8n-nodes-base.writeBinaryFile",
+      "typeVersion": 1,
+      "position": [
+        2920,
+        3700
+      ]
+    },
+    {
+      "parameters": {
+        "command": "={{ $json.datos.command }}"
+      },
+      "id": "f4e6a4f4-ad82-4e88-a722-0bd97076601c",
+      "name": "Execute Command",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        2700,
+        3900
+      ]
+    },
+    {
+      "parameters": {
+        "filePath": "={{ '/home/emky/n8n/descargas/' + $json.datos.filename }}"
+      },
+      "id": "9909777b-18c0-4a33-8f50-4acb8bcdf89f",
+      "name": "Read Disk",
+      "type": "n8n-nodes-base.readBinaryFile",
+      "typeVersion": 1,
+      "position": [
+        2700,
+        4100
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "file",
+        "operation": "upload",
+        "binaryData": true,
+        "binaryPropertyName": "data"
+      },
+      "id": "fd28a32d-45a3-48f6-a8f7-7ff091f62aaf",
+      "name": "Drive Upload",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        2920,
+        4100
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "2rl8vh5wM9ZsAbep",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst items = $input.all();\nconst results = items[0].json.results || [];\n\nlet summary = results.map(r => {\n    const action = r.accion || \"Unknown\";\n    const result = r.stdout || (r.id ? `File ${r.name} (${r.id})` : \"Success\");\n    return `${action}: ${result}`;\n}).join(\" | \");\n\n// Access Previous State\nconst cleanActor = $('Clean Actor').last().json;\n\nreturn [{ json: {\n  action_taken: results.map(r => r.accion).join(\", \"),\n  tool_result: summary,\n  tool_result_data: results,\n  planner_instruction: cleanActor.instruction,\n  user_goal: cleanActor.user_goal,\n  history: cleanActor.history,\n  counter: cleanActor.counter,\n  chat_history: cleanActor.chat_history\n} }];"
+      },
+      "id": "748fedea-114e-497e-9cf6-4a048f7334b9",
+      "name": "Aggregator",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3200,
+        3700
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.item.json;\nconst newHistory = item.history || [];\n\nnewHistory.push({\n  plan: item.planner_instruction,\n  action: item.action_taken,\n  result: item.tool_result,\n  result_data: item.tool_result_data\n});\n\nconst newCounter = (item.counter || 0) + 1;\n\nif (newCounter >= 15) {\n    console.log('\u26a0\ufe0f L\u00edmite de iteraciones alcanzado.');\n}\n\nreturn [{ json: { \n  user_goal: item.user_goal, \n  history: newHistory, \n  counter: newCounter,\n  chat_history: item.chat_history\n} }];"
+      },
+      "id": "f08f70d1-1c12-4320-a8df-a66d4a533d2f",
+      "name": "Update State",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3420,
+        3700
+      ]
+    },
+    {
+      "parameters": {
+        "unit": "seconds"
+      },
+      "id": "d3184029-a8be-404f-994e-9ca49260e1ea",
+      "name": "Wait",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1,
+      "position": [
+        3640,
+        3700
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Detect user message from ANY input node\nconst inputs = $input.all();\nlet message = \"\";\n\n// Check current input\nif (inputs.length > 0 && inputs[0].json.chatInput) {\n    message = inputs[0].json.chatInput;\n} else {\n    // Fallback to searching node data\n    try { \n        message = $node[\"When chat message received\"].json.chatInput; \n    } catch(e) {\n        message = \"No se detect\u00f3 mensaje del usuario.\";\n    }\n}\n\nlet longTermHistory = [];\ntry {\n  const historyData = $node[\"Read History\"].json.data || $node[\"Read History\"].json.content;\n  if (historyData) {\n    longTermHistory = (typeof historyData === 'string') ? JSON.parse(historyData) : historyData;\n  }\n} catch (e) {\n  longTermHistory = [];\n}\n\nreturn [{ \n  json: { \n    user_goal: message, \n    chat_history: longTermHistory, \n    history: [], \n    counter: 0 \n  } \n}];"
+      },
+      "id": "1d89c103-26b2-4e52-a93d-8fdad1b3a29c",
+      "name": "Init Context",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        340,
+        3520
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "1bd2a721-0fd4-4da1-8461-e7684fc6baa6",
+      "name": "Loop Merge",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        560,
+        3520
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return $input.all().map(item => {\n  const goal = item.json.user_goal;\n  const chatHistory = item.json.chat_history || [];\n  const stepHistory = item.json.history || [];\n  const counter = item.json.counter || 0;\n\n  let historyText = stepHistory.length > 0 \n    ? stepHistory.map((h, i) => `STEP ${i+1}: Action(s): ${h.action} -> Result: ${h.result}`).join(\"\\n\") \n    : \"Sin acciones previas.\";\n\n  const prompt = `IDENTIDAD: VEGA OS (Parallel Kernel).\nUsuario: Emky.\nEstado: Multi-Tasking Enabled.\n\n=== CAPACIDADES (NATIVAS) ===\n1. buscar_en_drive(query) <-- USA ESTO PARA DRIVE. NO USES COMANDOS.\n2. descargar_de_drive(fileId, filename) <-- USA ESTO. NO USES CURL/PYTHON.\n3. subir_a_drive(filename)\n4. ejecutar_comando(command) <-- SOLO PARA LINUX/SISTEMA (ls, cat, grep).\n5. leer_archivo(path)\n6. navegar_web(url)\n\n=== REGLAS CR\u00cdTICAS ===\n- NO INTENTES EJECUTAR SCRIPTS DE PYTHON (.py) PARA DRIVE.\n- Si te piden buscar/descargar de Drive, DEBES usar las funciones 1, 2 o 3.\n\n=== PARALLEL EXECUTION ===\nYou can now specify MULTIPLE actions to run at the same time.\nIf you need to search drive AND check local files, do both in one step.\nThe results will be gathered and sent back to you at once.\n\n=== OBJETIVO ===\n${goal}\n\n=== MEMORIA ===\n${historyText}\n\n=== FORMATO JSON ===\n{\n  \"thought\": \"Explicaci\u00f3n de por qu\u00e9 estas acciones en paralelo...\",\n  \"next_instruction\": \"Escribe aqu\u00ed lo que quieres hacer (puedes listar varias cosas)\",\n  \"is_done\": false,\n  \"final_response\": null\n}`;\n        return { json: { prompt, history: stepHistory, chat_history: chatHistory, user_goal: goal, counter } };\n});"
+      },
+      "id": "9f53886f-41f0-4d93-873a-1bd1f56cec95",
+      "name": "Planner Prep",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        780,
+        3520
+      ]
+    },
+    {
+      "parameters": {
+        "prompt": "={{ $json.prompt }}",
+        "model": "gemini-3-flash-preview",
+        "additionalOptions": {
+          "outputFormat": "json",
+          "jsonForce": true,
+          "temperature": 0.1
+        }
+      },
+      "id": "be3a8484-461b-4be1-ab57-b66700447443",
+      "name": "Gemini Planner",
+      "type": "CUSTOM.geminiCLI",
+      "typeVersion": 1,
+      "position": [
+        1000,
+        3520
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// VEGA v23: Standard Parse Planner\nconst items = $input.all();\nconst returnItems = [];\n\nfor (const item of items) {\n  let output = {};\n  try {\n    const inputJson = item.json || {};\n    const geminiText = inputJson.response || inputJson.text || \"\";\n    let parsed = {};\n    \n    // Intentar extraer JSON de la respuesta\n    const jsonMatch = geminiText.match(/```json\\s*([\\s\\S]*?)\\s*```/) || geminiText.match(/\\{.*\\}/s);\n    if (jsonMatch) {\n      parsed = JSON.parse(jsonMatch[1] || jsonMatch[0]);\n    } else {\n      parsed = { thought: geminiText, is_done: true, final_response: geminiText };\n    }\n    \n    let isDoneString = (parsed.is_done === true || String(parsed.is_done).toUpperCase() === 'TRUE') ? \"TRUE\" : \"FALSE\";\n    \n    // Fallback si no hay instrucci\u00f3n ni es done\n    if (isDoneString === \"FALSE\" && !parsed.next_instruction) {\n      isDoneString = \"TRUE\";\n      parsed.final_response = parsed.final_response || \"No next instruction provided by model.\";\n    }\n\n    output = {\n      ...inputJson,\n      planner_output: {\n        ...parsed,\n        is_done_string: isDoneString\n      }\n    };\n  } catch (error) {\n    output = {\n      error: error.message,\n      planner_output: { is_done_string: \"TRUE\", final_response: \"Error en Parse Planner: \" + error.message }\n    };\n  }\n  returnItems.push({ json: output });\n}\nreturn returnItems;"
+      },
+      "id": "7f42c43a-e418-4aaf-87aa-4b8ba3907b1c",
+      "name": "Parse Planner",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1220,
+        3520
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "c6229606-f187-43ca-938b-d77759b6711e",
+              "leftValue": "={{ $json.planner_output.is_done_string }}",
+              "rightValue": "TRUE",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "14e43b41-da7e-4693-95d5-6425fc5a3617",
+      "name": "Route Decision",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1460,
+        3520
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "resp",
+              "name": "response",
+              "value": "={{ $json.planner_output.final_response || 'ERROR DE RUTEO: isDone=' + $json.planner_output.is_done_string }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "efe99098-0177-4d4f-bfea-650f3249f663",
+      "name": "Final Response",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1740,
+        3360
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.item.json;\nconst instruction = item.planner_output.next_instruction;\nconst prompt = `CONVIERTE ESTO A UN ARRAY DE ACCIONES JSON:\nInstrucci\u00f3n: \"${instruction}\"\n\nREGLAS IMPORTANTES:\n- Si la instrucci\u00f3n es sobre Google Drive, USA 'buscar_en_drive' / 'descargar_de_drive'.\n- NUNCA generes 'ejecutar_comando' con scripts de python para Drive.\n\nREGLAS DE FORMATO:\n- Si hay varias acciones, sep\u00e1ralas.\n- Usa el ENUM de acciones v\u00e1lido.\n\nSALIDA: \n{ \n  \"actions\": [\n    { \"accion\": \"buscar_en_drive\", \"datos\": { \"query\": \"...\" } },\n    { \"accion\": \"ejecutar_comando\", \"datos\": { \"command\": \"...\" } }\n  ]\n}`;\nreturn [{ json: { ...item, prompt, instruction } }];"
+      },
+      "id": "c5ac7de5-6d51-4447-a838-bfaf67be5cc4",
+      "name": "Actor Prep",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1740,
+        3700
+      ]
+    },
+    {
+      "parameters": {
+        "prompt": "={{ $json.prompt }}",
+        "model": "gemini-3-flash-preview",
+        "additionalOptions": {
+          "outputFormat": "json",
+          "jsonForce": true,
+          "temperature": 0.0,
+          "maxTokens": 1024,
+          "responseSchema": "{\"type\": \"OBJECT\", \"properties\": {\"actions\": {\"type\": \"ARRAY\", \"items\": {\"type\": \"OBJECT\", \"properties\": {\"accion\": {\"type\": \"STRING\", \"enum\": [\"buscar_en_drive\", \"descargar_de_drive\", \"subir_a_drive\", \"ejecutar_comando\", \"leer_archivo\", \"navegar_web\"]}, \"datos\": {\"type\": \"OBJECT\", \"properties\": {\"query\": {\"type\": \"STRING\"}, \"fileId\": {\"type\": \"STRING\"}, \"filename\": {\"type\": \"STRING\"}, \"command\": {\"type\": \"STRING\"}, \"path\": {\"type\": \"STRING\"}, \"url\": {\"type\": \"STRING\"}}}}, \"required\": [\"accion\", \"datos\"]}}}, \"required\": [\"actions\"]}"
+        }
+      },
+      "id": "aff65b51-b976-4abf-ae20-ef2f3f85f67f",
+      "name": "Gemini Actor",
+      "type": "CUSTOM.geminiCLI",
+      "typeVersion": 1,
+      "position": [
+        1960,
+        3700
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst item = $input.item.json;\nlet raw = item.response || \"{}\";\nif (typeof raw !== 'string') raw = JSON.stringify(raw);\n\nlet parsed = {};\ntry {\n    const jsonMatch = raw.match(/```json\\s*([\\s\\S]*?)\\s*```/) || raw.match(/\\{.*\\}/s);\n    if (jsonMatch) raw = jsonMatch[1] || jsonMatch[0];\n    parsed = JSON.parse(raw);\n} catch(e) { parsed = { actions: [] }; }\n\nconst actions = parsed.actions || (parsed.accion ? [parsed] : []);\n\nconst map = {\n    'search_drive': 'buscar_en_drive',\n    'download_file': 'descargar_de_drive',\n    'run_command': 'ejecutar_comando',\n    'run_shell_command': 'ejecutar_comando',\n    'list_directory': 'ejecutar_comando',\n    'ls': 'ejecutar_comando'\n};\n\nconst validActions = ['buscar_en_drive', 'descargar_de_drive', 'subir_a_drive', 'ejecutar_comando', 'leer_archivo', 'navegar_web'];\n\nreturn actions.map(a => {\n    let accion = (a.accion || \"\").toLowerCase();\n    let datos = a.datos || {};\n    \n    accion = map[accion] || accion;\n    \n    if (accion === 'ls') {\n        datos.command = `ls -R ${datos.path || '.'}`;\n        accion = 'ejecutar_comando';\n    }\n\n    if (!validActions.includes(accion)) {\n        accion = 'ejecutar_comando';\n        datos = { command: `echo \"SYSTEM ERROR: Unknown action '${a.accion}'\"` };\n    }\n\n    \n    // --- ID NORMALIZATION FIX ---\n    if (datos.file_id && !datos.fileId) {\n        datos.fileId = datos.file_id;\n    }\nreturn { json: { ...item, accion, datos, action_count: actions.length } };\n});"
+      },
+      "id": "c39b8f9d-9816-484a-bb4a-8b61255de101",
+      "name": "Clean Actor",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2180,
+        3700
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.accion }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "buscar_en_drive"
+                  }
+                ]
+              }
+            },
+            {
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.accion }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "descargar_de_drive"
+                  }
+                ]
+              }
+            },
+            {
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.accion }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "subir_a_drive"
+                  }
+                ]
+              }
+            },
+            {
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.accion }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "ejecutar_comando"
+                  }
+                ]
+              }
+            },
+            {
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.accion }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "leer_archivo"
+                  }
+                ]
+              }
+            },
+            {
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.accion }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "navegar_web"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ae837b2a-0641-4625-8a78-9b3dbdf98556",
+      "name": "Tool Router",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        2400,
+        3700
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "chat_resp",
+              "name": "output",
+              "value": "={{ $json.response }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d0c62496-a1e6-4d51-a53b-792ec3b79818",
+      "name": "Format Chat Response",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2430,
+        3360
+      ]
+    },
+    {
+      "parameters": {
+        "command": "={ '/home/emky/n8n/documentacion/SCRIPTS_AND_TOOLS/.venv_mcp/bin/python /home/emky/n8n/documentacion/SCRIPTS_AND_TOOLS/puppeteer_mcp_bridge.py ' + $json.accion + ' ' + $json.datos.url }"
+      },
+      "id": "4136fb25-c81d-4964-b09c-39c4d1d4a52d",
+      "name": "Execute Command (Puppeteer)",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        2700,
+        4050
+      ]
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationField": "results",
+        "include": "all",
+        "options": {}
+      },
+      "id": "antigravity_aggregate_v41",
+      "name": "Aggregate Results",
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        2950,
+        3900
+      ]
+    }
+  ],
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Read History",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read History": {
+      "main": [
+        [
+          {
+            "node": "Init Context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Memory": {
+      "main": [
+        [
+          {
+            "node": "Save History to Disk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save History to Disk": {
+      "main": [
+        [
+          {
+            "node": "Format Chat Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Drive Search": {
+      "main": [
+        [
+          {
+            "node": "Aggregate Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Drive Download": {
+      "main": [
+        [
+          {
+            "node": "Save to Disk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save to Disk": {
+      "main": [
+        [
+          {
+            "node": "Aggregate Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Command": {
+      "main": [
+        [
+          {
+            "node": "Aggregate Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Disk": {
+      "main": [
+        [
+          {
+            "node": "Drive Upload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Drive Upload": {
+      "main": [
+        [
+          {
+            "node": "Aggregate Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregator": {
+      "main": [
+        [
+          {
+            "node": "Update State",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update State": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Loop Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Init Context": {
+      "main": [
+        [
+          {
+            "node": "Loop Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Merge": {
+      "main": [
+        [
+          {
+            "node": "Planner Prep",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Planner Prep": {
+      "main": [
+        [
+          {
+            "node": "Gemini Planner",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini Planner": {
+      "main": [
+        [
+          {
+            "node": "Parse Planner",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Planner": {
+      "main": [
+        [
+          {
+            "node": "Route Decision",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Final Response": {
+      "main": [
+        [
+          {
+            "node": "Update Memory",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Actor Prep": {
+      "main": [
+        [
+          {
+            "node": "Gemini Actor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini Actor": {
+      "main": [
+        [
+          {
+            "node": "Clean Actor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clean Actor": {
+      "main": [
+        [
+          {
+            "node": "Tool Router",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tool Router": {
+      "main": [
+        [
+          {
+            "node": "Drive Search",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Drive Download",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Drive Upload",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Execute Command",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Read Disk",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Execute Command (Puppeteer)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route Decision": {
+      "main": [
+        [
+          {
+            "node": "Final Response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Actor Prep",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate Results": {
+      "main": [
+        [
+          {
+            "node": "Aggregator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
