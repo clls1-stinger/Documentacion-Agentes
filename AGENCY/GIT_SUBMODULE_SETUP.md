@@ -25,35 +25,21 @@ To add this repository's `AGENCY` folder (or specific parts) to another repo:
     git submodule update
     ```
 
-## 3. 🔄 AUTOMATIC SYNCHRONIZATION (The "One Fetch" Rule)
-To ensure that fetching the parent repository **always** updates the `AGENCY` submodule automatically, configure your git environment as follows:
+## 3. 🔄 How to Update Templates
+1.  **Pull changes in the submodule**:
+    ```bash
+    cd AGENCY_TEMPLATE
+    # Fetch latest changes
+    git fetch
+    git merge origin/main
+    ```
 
-### Option A: Per-Repository Configuration (Recommended)
-Run this command inside your repository to make `git pull` automatically update submodules:
-
-```bash
-git config submodule.recurse true
-```
-
-Now, when you run:
-```bash
-git pull
-```
-Git will automatically fetch and update the `AGENCY_TEMPLATE` folder to the commit specified by the parent repo.
-
-### Option B: Global Configuration
-To make this the default behavior for *all* your repositories:
-
-```bash
-git config --global submodule.recurse true
-```
-
-### Option C: Manual "One-Shot" Update
-If you don't want to change the config, use this flag every time you pull:
-
-```bash
-git pull --recurse-submodules
-```
+2.  **Commit the updated reference in the main repo**:
+    ```bash
+    cd ..
+    git add AGENCY_TEMPLATE
+    git commit -m "chore: update agency templates to latest version"
+    ```
 
 ## 4. 📝 Best Practices
 *   **Do not modify submodule files directly** inside the consuming repo unless you intend to push changes back to the source.

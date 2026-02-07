@@ -5,8 +5,6 @@
 ## 1. 🏛️ CORE PHILOSOPHY (VEGA OS KERNEL)
 *   **Pillars**: [VEGA_CORE_PILLARS.md](../../Documentaciones%20base/documentacion-operation%20central/0_CORE_PERSONA/VEGA_CORE_PILLARS.md)
 *   **Identity**: [VEGA_IDENTITY.md](../../Documentaciones%20base/documentacion-operation%20central/0_CORE_PERSONA/VEGA_IDENTITY.md)
-*   **Agent Protocol**: [AGENT_PROTOCOL.md](../1_PRESENT/AGENT_PROTOCOL.md)
-*   **Data Schema**: [SCHEMA_REFERENCE.md](../1_PRESENT/SCHEMA_REFERENCE.md)
 
 ## 2. 🔌 INTEGRATIONS & PROTOCOLS
 *   **MCP Protocol**: [MCP_PROTOCOL.md](../../Documentaciones%20base/documentacion-operation%20central/1_PROTOCOLS/MCP_PROTOCOL.md)
