@@ -1,26 +1,40 @@
-# 🌐 CROSS-PROJECT ALIGNMENT STRATEGY (ONE BRAIN, MANY BODIES)
-
-> **Purpose**: Ensure that every project (Visor, n8n, etc.) remains compliant with the "Master Template" while allowing for local specializations.
-
-## 1. 🛠️ THE INFRASTRUCTURE: GIT SUBMODULES
-To allow all agents to see the template, we use **Git Submodules** pointing to your central repository: `/home/emky/Codigo/Documentacion/Documentacion-Agentes/`.
-
-*   **Implementation**: Each project will have a folder (e.g., `AGENCY_TEMPLATE`) linked to the master repo.
-*   **The Jewel**: If you update a rule in the Master Template, a simple `git submodule update` in any project will notify the local agent of the new rules.
-
-## 2. 🛡️ THE COMPLIANCE PROTOCOL (BOOTLOADER)
-Every agent, upon "booting" (reading `AGENTS.md`), must perform a **Consistency Check**:
-
-1.  **Read Global Rules**: Access the `AGENCY_TEMPLATE` folder.
-2.  **Verify Local Context**: Compare local `AGENCY/1_PRESENT/` with the Template's requirements.
-3.  **Identify Gaps**: Flag any missing documentation or violated pillars (e.g., "The 70/30 Rule" applied to a new SSD).
-
-## 3. 🧠 AGENT INSTRUCTION (SYSTEM PROMPT)
-Add this directive to the "Rules of Engagement":
-> "Always verify if the current repository's `AGENCY` structure is aligned with the `AGENCY_TEMPLATE`. If inconsistencies are found, prioritize fixing the documentation to reflect the Master Pillars before proceeding with execution."
-
-## 4. 🚀 THE VISION: CENTRALIZED KNOWLEDGE
-By linking all projects to the same source, you create a **Meta-Agency**. An agent working on your n8n workflows will have the same "moral compass" and technical constraints as the agent working on your Visor media stack.
-
 ---
-*Vega OS Kernel - Alignment Decisions*
+type: decision_record
+author: [AGENT_ID]
+date: 2024-05-23
+context: Ensuring multi-project consistency across Visor, n8n, etc.
+decision: Use Git Submodules pointing to a central 'Master Template' repository.
+status: ACCEPTED
+---
+
+# 🧠 DECISION RECORD: CROSS-PROJECT ALIGNMENT STRATEGY (ONE BRAIN, MANY BODIES)
+
+> **Meta-Cognition Principle**: Capture the *reasoning* so future agents understand the *intent*.
+
+## 1. ❓ CONTEXT (THE PROBLEM)
+*   **Situation**: Multiple projects (Visor, n8n, etc.) need to remain compliant with a "Master Template" while allowing for local specializations. Without a central mechanism, documentation and protocols drift apart.
+*   **Constraints**: Needs to work across different repositories and possibly different machines.
+*   **Assumption**: Agents can access the central repository path or URL.
+
+## 2. 💡 OPTIONS CONSIDERED
+*   **Option A**: **Git Submodules** (Chosen)
+    *   **Pros**: Single source of truth. Updates propagate via `git submodule update`.
+    *   **Cons**: slightly more complex git operations.
+*   **Option B**: **Manual Copying**
+    *   **Pros**: Simple, no dependency.
+    *   **Cons**: High risk of drift, manual labor to update.
+
+## 3. ✅ THE DECISION
+*   **Chosen Option**: **Option A (Git Submodules)** pointing to `/home/emky/Codigo/Documentacion/Documentacion-Agentes/`.
+*   **Rationale**: By linking all projects to the same source, we create a **Meta-Agency**. An agent working on n8n workflows will have the same "moral compass" and technical constraints as the agent working on the Visor media stack.
+*   **Implementation Details**:
+    *   **Structure**: Each project will have a folder (e.g., `AGENCY_TEMPLATE`) linked to the master repo.
+    *   **Compliance Protocol**: Every agent, upon "booting", must compare local `AGENCY/1_PRESENT/` with the Template's requirements.
+    *   **Agent Instruction**: "Always verify if the current repository's `AGENCY` structure is aligned with the `AGENCY_TEMPLATE`."
+
+## 4. 🔮 PREDICTED CONSEQUENCES (FUTURE)
+*   **Positive**: **Centralized Knowledge**. Updates in the Master Template flow to all bodies.
+*   **Negative**: Agents must handle submodule initialization and updates correctly.
+
+## 5. 🔄 REVIEW TRIGGER
+*   **When to reconsider**: If the submodule approach becomes too cumbersome for simple agents or if we move to a monorepo structure.
