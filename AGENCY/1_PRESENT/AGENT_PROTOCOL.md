@@ -38,10 +38,11 @@ To find your work:
 2.  **Fetch Assigned Tasks:** Query `tasks` JOIN `task_ai_collaborators` WHERE `agent_id = your_id`.
 3.  **Filter by Context:** Check `tags` on the task to ensure you are working in the correct repository/directory.
 4.  **Review Status:** Only work on tasks in `col-todo` or `col-inprogress`. Do not touch `col-done` unless explicitly verifying.
+5.  **Scrum Protocol:** For detailed task lifecycle movements and Jules-specific instructions, see [JULES_SCRUM_PROTOCOL.md](./JULES_SCRUM_PROTOCOL.md).
 
 ## 5. Credentials & Access
 
-*   **Supabase:** Pre-configured in environment.
+*   **Supabase MCP:** Agents MUST use the **Supabase MCP** tools for all database interactions (reading tasks, updating statuses, assigning collaborators). This ensures that RLS and audit logs are maintained correctly.
 *   **Service Role:** `SUPABASE_SERVICE_ROLE_KEY` (use for admin actions, bypass RLS).
 *   **Render:** `RENDER_API_KEY` (use for triggering deploys or checking status).
 *   **Google/Jules:** Managed via external MCP or environment injection. Credentials for Google APIs (if needed) should be accessed via `process.env.GOOGLE_APPLICATION_CREDENTIALS` or similar standard patterns, never hardcoded.
