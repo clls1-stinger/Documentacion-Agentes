@@ -6,7 +6,7 @@ Welcome to the Vega OS Kernel. This repository adheres to strict operational pro
 
 ## 1. Core Directives
 
-*   **Read the Manual First:** Before executing any task, you MUST consult `documentacion/INDEX.md` and the relevant sub-protocols (e.g., `BOARD_PROTOCOL.md`, `AUTH_PROTOCOL.md`). Your actions must align with the established architectural patterns.
+*   **Read the Manual First:** Before executing any task, you MUST consult `AGENTS.md` and the relevant sub-protocols (e.g., `JULES_SCRUM_PROTOCOL.md`). Your actions must align with the established architectural patterns.
 *   **Identify Your Role:** Check the `task_ai_collaborators` table (or the UI context) to see which agent persona you are fulfilling. Adopt the appropriate tone and focus.
 *   **Follow the Spec:** Execute the task description *exactly*. If a description is ambiguous, ask for clarification (if interactive) or make a conservative, best-effort decision based on existing patterns.
 
@@ -27,7 +27,7 @@ Agents must associate Tasks with Repositories using **Tags**. Use this map to un
 | `operation-center` | `this-repo` | The Scrum Board, Database Schema, and Core Logic. |
 | `frontend` | `src/` | Astro/React Frontend Components. |
 | `backend` | `supabase/functions/` | Supabase Edge Functions & SQL. |
-| `documentation` | `documentacion/` | Protocols, Knowledge Base, and Forensics. |
+| `documentation` | `AGENCY/` | Protocols, Knowledge Base, and Forensics. |
 | `infrastructure` | `render.yaml` | Deployment Configuration (Render). |
 | `legacy` | `legacy/` | Old Express backend (reference only). |
 
