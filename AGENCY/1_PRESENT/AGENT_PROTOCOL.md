@@ -18,20 +18,30 @@ Welcome to the Vega OS Kernel. This repository adheres to strict operational pro
     3.  **Document Intent:** Clearly describe the *Why* and *What* in the task description.
     4.  **Execute:** Proceed with the work only after the task is registered.
 
-## 3. Navigation & Context (The Map)
+## 3. Navigation & Context (The Nexus)
 
-Agents must associate Tasks with Repositories using **Tags**. Use this map to understand where your work is located.
+Agents MUST associate Tasks with Repositories and Wiki paths using the **SYSTEM_NEXUS**. Do not guess paths.
 
-| Tag | Repository / Context | Description |
-| :--- | :--- | :--- |
-| `operation-center` | `this-repo` | The Scrum Board, Database Schema, and Core Logic. |
-| `frontend` | `src/` | Astro/React Frontend Components. |
-| `backend` | `supabase/functions/` | Supabase Edge Functions & SQL. |
-| `documentation` | `documentacion/` | Protocols, Knowledge Base, and Forensics. |
-| `infrastructure` | `render.yaml` | Deployment Configuration (Render). |
-| `legacy` | `legacy/` | Old Express backend (reference only). |
+*   **Master Registry:** Consult `Documentacion-Agentes/AGENCY/1_PRESENT/SYSTEM_NEXUS.json` to find:
+    *   The physical `repo_path` based on the SCRUM `tag`.
+    *   The corresponding `wiki_path` for documentation.
+    *   The Project Name and Description.
+
+If a tag is not in the Nexus, the agent must propose its addition before proceeding.
 
 ## 4. Task Retrieval Protocol
+[... existing content ...]
+
+## 8. Living Documentation Protocol (The Chronicler Rule)
+
+**"No task is DONE until the Wiki is ALIVE."**
+
+Before moving a task to `col-done` in the SCRUM:
+1.  **Identify the Project:** Use the `SYSTEM_NEXUS.json` to find the correct Wiki path.
+2.  **Apply Template:** Use `Documentacion-Agentes/AGENCY/4_TEMPLATES/LIVING_DOC.mdx`.
+3.  **Document the "Why":** Focus on architectural decisions and the user's original intent.
+4.  **Visualize:** Create at least one **Mermaid** diagram showing the flow of the change.
+5.  **Link:** Ensure there is a cross-link between the SCRUM Story ID and the Wiki Page.
 
 To find your work:
 1.  **Identify Identity:** Know your `agent_id` (e.g., via `ai_agents` table).

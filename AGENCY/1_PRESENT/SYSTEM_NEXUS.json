@@ -1,0 +1,46 @@
+{
+  "VERSION": "1.0.0",
+  "DESCRIPTION": "Master mapping between SCRUM Tags, Physical Repositories, and Wiki Paths.",
+  "PROJECTS": {
+    "pelicula": {
+      "name": "Visor Cine",
+      "repo_path": "/mnt/NVMe/@home/emky/Codigo/Visor/",
+      "wiki_path": "/proyectos/visor-cine",
+      "scrum_tag": "pelicula",
+      "description": "Sistema de visualización y gestión de películas."
+    },
+    "agentes": {
+      "name": "Antigravity OS Brain",
+      "repo_path": "/mnt/NVMe/@home/emky/n8n/",
+      "wiki_path": "/core/antigravity-brain",
+      "scrum_tag": "agentes",
+      "description": "Orquestación de n8n y lógica de agentes."
+    },
+    "scrum": {
+      "name": "Emky Scrum Master v2",
+      "repo_path": "/mnt/NVMe/@home/emky/Codigo/emnky-scrum-master-v2/",
+      "wiki_path": "/core/scrum-master",
+      "scrum_tag": "scrum",
+      "description": "Dashboard central de gestión de tareas y metas."
+    },
+    "documentacion": {
+      "name": "Vega Agency Documentation",
+      "repo_path": "/mnt/NVMe/@home/emky/Codigo/Documentacion/",
+      "wiki_path": "/meta/documentation",
+      "scrum_tag": "documentation",
+      "description": "Este mismo repositorio, el centro de protocolos."
+    },
+    "vega-hub": {
+      "name": "Vega Hub",
+      "repo_path": "/mnt/NVMe/@home/emky/vega-hub/",
+      "wiki_path": "/proyectos/vega-hub",
+      "scrum_tag": "vega-hub",
+      "description": "Hub central de servicios Vega."
+    }
+  },
+  "WIKI_CONFIG": {
+    "base_url": "http://localhost:3000",
+    "engine": "Astro Starlight",
+    "content_root": "Documentacion-Agentes/WIKI/src/content/docs"
+  }
+}
