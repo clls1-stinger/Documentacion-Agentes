@@ -1,0 +1,64 @@
+---
+title: "[NOMBRE_DEL_PROYECTO] - Documentación Viva"
+description: "Documentación generada automáticamente por Agentes de Antigravity OS"
+sidebar:
+  order: 1
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+# 🏗️ [NOMBRE_DEL_PROYECTO]
+
+> **ID de Historia SCRUM:** [ID_HISTORIA]
+> **Última Actualización:** [FECHA] por [AGENT_ID]
+
+## 🎯 Intenciones del Usuario
+*¿Qué quería lograr el usuario con este cambio/funcionalidad?*
+
+- **Prompt Original:** "[Citar el prompt del usuario aquí]"
+- **Objetivo Final:** [Explicación clara del resultado esperado]
+
+```mermaid
+graph LR
+    User[Usuario] -->|Intención| Agent[Agente]
+    Agent -->|Acción| Code[Resultado Técnico]
+```
+
+## 🧠 El "Porqué" (Pensamiento Lateral)
+*Justificación de las decisiones arquitectónicas tomadas por el agente.*
+
+- **Decisión:** [Ej: Usar un JSON centralizado en lugar de múltiples archivos]
+- **Razón:** [Ej: Facilita la consistencia y reduce la latencia de búsqueda para otros agentes]
+- **Alternativas descartadas:** [Ej: No se usó SQL para evitar overhead en esta fase]
+
+## 🛠️ Skeleton Técnico
+*Mapeo de archivos modificados y lógica implementada.*
+
+### Arquitectura de Conexión
+```mermaid
+graph TD
+    A[Componente A] -->|Envia Datos| B(Procesador)
+    B --> C{¿Éxito?}
+    C -->|Si| D[Actualiza DB]
+    C -->|No| E[Log de Error]
+```
+
+### Archivos Clave:
+- `[ruta/al/archivo]`: [Descripción de su función]
+- `[ruta/al/archivo]`: [Descripción de su función]
+
+## 📜 Historial de Cambios (Changelog)
+*Rastreo cronológico de la evolución de esta pieza de software.*
+
+| Fecha | Agente | Acción | Resultado |
+| :--- | :--- | :--- | :--- |
+| [FECHA] | [ID] | Creación Inicial | Skeleton base |
+
+---
+
+## 🔗 Nexo con SCRUM
+<aside>
+  <strong>Estado Actual:</strong> [Live Status Component Placeholder]
+  <br/>
+  <a href="http://localhost:5173/story/[ID_HISTORIA]">Ver Historia en Scrum Master v2</a>
+</aside>

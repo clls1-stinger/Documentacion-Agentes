@@ -27,7 +27,24 @@ All documentation you create **MUST** follow the standardized templates in `AGEN
 *   **Decisions**: Use `DECISION_RECORD.md`.
 *   **State Updates**: Update `GLOBAL_STATE.md` at the end of your session.
 
-## 4. 🧭 NAVIGATION
+## 4. 🧠 AGENT SKILLS (Procedural Knowledge)
+This project utilizes the `skills.sh` pattern to provide procedural knowledge. Consult the following skills before making changes:
+
+### 🌟 Core Vega Skills
+*   [vega-aesthetic-control](skills/vega-aesthetic-control/SKILL.md): Visual and UX standards.
+*   [fastapi-python-bridge](skills/fastapi-python-bridge/SKILL.md): Backend adapter patterns.
+
+### 🧩 Frontend & Reactivity
+*   [developing-preact](skills/developing-preact/SKILL.md): Native-first Preact patterns.
+*   [async-preact-signals](skills/async-preact-signals/SKILL.md): Handling async state with signals.
+*   [preact-buildless-frontend](skills/preact-buildless-frontend/SKILL.md): Zero-build architecture.
+*   [tailwind-design-system](skills/tailwind-design-system/SKILL.md): Scalable utility-first styling.
+
+### 🦀 Desktop & Rust
+*   [tauri](skills/tauri/SKILL.md): Native app best practices.
+*   [calling-rust-from-tauri-frontend](skills/calling-rust-from-tauri-frontend/SKILL.md): IPC and bridge patterns.
+
+## 5. 🎨 VISUAL SYNERGY PROTOCOL
 *   **Past (Arche)**: `AGENCY/0_ARCHE/` - Where we came from.
 *   **Present (Status Quo)**: `AGENCY/1_PRESENT/` - Where we are.
 *   **Future (Telos)**: `AGENCY/2_FUTURE/` - [ROADMAP_TELOS.md](AGENCY/2_FUTURE/ROADMAP_TELOS.md) - Where we are going.
